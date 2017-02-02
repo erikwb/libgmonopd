@@ -19,6 +19,7 @@
 
 /* debt.c: allocates and manipulates debts */
 
+#include <stdlib.h>
 #include "stub.h"
 #include "player.h"
 #include "estate.h"

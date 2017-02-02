@@ -19,6 +19,7 @@
 
 /* card.c: allocates and manipulates cards */
 
+#include <stdlib.h>
 #include "stub.h"
 #include "game.h"
 #include "card.h"

@@ -19,6 +19,7 @@
 
 /* player.c: allocates and manipulates players */
 
+#include <stdlib.h>
 #include <stdarg.h>
 
 #include "stub.h"

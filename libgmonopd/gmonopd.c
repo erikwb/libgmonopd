@@ -21,6 +21,7 @@
 #include <pthread.h>
 #include "libgmonopd.h"
 #include "event.h"
+#include "network.h"
 
 static void gmonopd_run_internal(void *sv);
 

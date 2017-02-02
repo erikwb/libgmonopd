@@ -19,6 +19,7 @@
 
 /* game.c: manipulates the game state */
 
+#include <stdlib.h>
 #include <time.h>
 #include <stdarg.h>
 #include <string.h>

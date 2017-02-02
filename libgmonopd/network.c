@@ -20,6 +20,7 @@
 /* network.c: sets up connections and calls input handler */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <netinet/in.h>
@@ -28,10 +29,14 @@
 #include <fcntl.h>
 #include <netdb.h>
 #include <stdarg.h>
+#include <malloc.h>
+#include <string.h>
+#include <errno.h>
 
 #include "player.h"
 #include "network.h"
 #include "libgmonopd.h"
+#include "input.h"
 
 extern int errno;
 
@@ -289,7 +294,11 @@ void delete_sock(sock *s)
 	    s_step; 
 	    s_trailer = s_step, s_step = s_step->next) {
 		if(s_step = s) {
-			(s_trailer ? s_trailer->next : s->server->socks) = s_step->next;
+                        if(s_trailer) {
+                                s_trailer->next = s_step->next;
+                        } else {
+                                s->server->socks = s_step->next;
+                        }
 			break;
 		}
 	}

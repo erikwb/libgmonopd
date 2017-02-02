@@ -19,6 +19,7 @@
 
 /* estate.c: allocates and manipulates estates */
 
+#include <stdlib.h>
 #include "stub.h"
 #include "game.h"
 #include "player.h"

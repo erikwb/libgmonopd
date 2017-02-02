@@ -19,6 +19,7 @@
 
 /* event.c: handles creation of events */
 
+#include <stdlib.h>
 #include "stub.h"
 #include "game.h"
 #include "player.h"

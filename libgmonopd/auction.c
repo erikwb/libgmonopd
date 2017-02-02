@@ -19,6 +19,7 @@
 
 /* auction.c: handles auctions and auction I/O */
 
+#include <stdlib.h>
 #include "const.h"
 #include "stub.h"
 

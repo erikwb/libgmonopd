@@ -97,5 +97,6 @@ extern void player_advance_to(player *p, int location);
 extern void player_advance_to_with_go(player *p, int location);
 extern void player_advance_next(player *p, int estatetype);
 extern void player_tojail(player *p);
+extern void delete_player(player *p);
 
 #endif

@@ -19,6 +19,7 @@
 
 /* trade.c: allocates and manipulates trades */
 
+#include <stdlib.h>
 #include <stdarg.h>
 
 #include "stub.h"
