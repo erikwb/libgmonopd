@@ -1,0 +1,4 @@
+libgmonopd 0.3.0 README
+
+-- documentation is pretty sparse at the moment.  See libgmonopd/libgmonopd.h
+   for the API definition :)

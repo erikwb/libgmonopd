@@ -1,0 +1,32 @@
+===============================================================================
+gmonopd TODO
+working torwards: 0.3.0
+===============================================================================
+
+- not implemented, low priority
++ not implemented, high priority
+! not implemented, critical priority
+v implemented, not tested
+V implemented, tested
+? questionable bug
+
+===============================================================================
+
+- ev_tmp somehow got set to 0x20 (?!)
+- jail should pay_to_location
+- jail pay should let out immediately
+- broadcast dicerolls (new protocol thing?)
++ automake/autoconf tomfoolery, config files in right place
++ monopigator
+
+- income tax: 10% or 200
+  - implement display type
+  - require input
+  - offer command
+  - implement timeout as event
+- game does not end when only 1 player is left :-)
+^ resend playerlist when player leaves, or send leave msg
+
+===== features for later versions =====
+
+- save/load

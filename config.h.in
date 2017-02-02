@@ -1,0 +1,14 @@
+/* config.h.in.  Generated automatically from configure.in by autoheader.  */
+#ifndef ACCONFIG_H
+#define ACCONFIG_H 
+
+#undef LIBGMONOPD_MAJOR_VERSION
+#undef LIBGMONOPD_MICRO_VERSION
+#undef LIBGMONOPD_MINOR_VERSION
+
+
+
+/* Define if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
+#endif /* ACCONFIG_H */

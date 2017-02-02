@@ -1,0 +1,299 @@
+===============================================================================
+monopd v0.3 preliminary API                      Tue Aug 07 01:59:21 2001 -0400
+Erik Bourget <ebourg@po-box.mcgill.ca>
+===============================================================================
+
+Contents
+
+	1) Notes
+		i. protocol notes
+		ii. server introduction
+		iii. contact information
+		iv. clients in development
+		v. generally active servers
+	2) Client->Server Messages
+	3) Server->Client Messages
+	
+===============================================================================
+1) Notes
+===============================================================================
+
+i. protocol notes
+-----------------
+
+Commands from clients to the monopd server are in the form of a tiny message
+preceeded by a dot and followed by a newline:
+
+.gn
+
+Messages from the server to clients are in XML form.  An example:
+
+<monopd><playerupdate playerid="1" money="1420"/></monopd>
+
+All messages are complete and exclusive to the line they are sent on to ease 
+client development; a message such as
+
+<monopd>
+	<gamelist>
+		<game id="1" users="2"/>
+	</gamelist>
+</monopd>
+
+should be parsed by clients as five seperate (and all invalid) messages.
+
+Not all fields of the XML messages are sent on every update; clients are to
+assume that anything not referred to is either undefined if there has been no
+previous mention of the attribute, or that it keeps the same value as the
+last update that included it set it to.
+
+Eventually this requirement might be removed, just let me know if it really
+bugs you.
+
+ii. server introduction
+-----------------------
+
+The server identifies itself with an introductory XML message:
+
+<monopd><server name="libcapsi_network monopd" version="pre-0.2.0"/>
+  <client clientid="26" cookie="?"/></monopd>
+
+Each client that connects to the server receives a unique clientid; this will 
+eventually be used with the cookie field to support graceful timeouts.
+
+When a game starts, the client will receive a barrage of playerupdates
+specifying all of the players that are in the game, a barrage of estateupdates
+specifying all of the estates that are in the game, a second <client/> 
+informing the player what his playerid is, and then a gameupdate message
+indicating that the game has started.
+
+iii. contact information
+------------------------
+
+The monopd team uses the KMonop mailinglist as its primary discussion forum.
+
+KMonop mailinglist: <kmonop-devel@lists.capsi.com>
+       archives   : http://capsi.com/cgi-bin/ezmlm-cgi/1/
+
+iv. clients in development
+--------------------------
+
+Mail me <ebourg@po-box.mcgill.ca> to get your monopd-compatible client
+added to this list.
+
+gtkmonop
+--------
+Author      : Erik Bourget <ebourg@po-box.mcgill.ca>
+Description : a monopd client written in gtk+
+URL         : http://gtkmonop.sourceforge.net
+
+kmonop
+------
+Author	    : Rob Kaper <cap@capsi.com>
+Description : a monopd client for KDE
+URL	    : http://capsi.com/kmonop
+
+v. generally active servers
+---------------------------
+
+odinnet.ath.cx:1234    (up to date with cvs as of this writing)
+monopd.capsi.com:1235  (i don't know how old this is :p)
+
+===============================================================================
+2) client->server messages
+===============================================================================
+
+The following is an exhaustive list of supported client-server messages.
+
+$<number> refers to a value that should be supplied; i.e. for a command .xyz$1,
+the message .xyz14 would be a valid instance of the command to send to the
+server.
+
+- trade commands
+
+.Tn$1    : Initiate a trade with player with playerid $1.
+.Te$1:$2 : Toggle inclusion of estate with estateid $2 in trade with
+	   tradeid $1.
+.Tm$1:$2 : Offer $2 dollars to trade with tradeid $1.
+.Ta$1    : Accept current terms of trade with tradeid $1.
+.Tr$1    : Reject trade $1.
+
+- movement commands
+
+.r	 : roll dice for movement
+.E	 : end current turn
+.t$1     : confirm latest player movement to location $1.  This is used
+	   for clients that animate token movement to let the daemon know
+	   when to give money for going across "Go".
+
+- debt settling commands
+
+.D	 : declare bankruptcy
+.p	 : pay off debts
+
+- estate management commands
+
+.eb	 : buy current estate
+.ea	 : auction current estate
+.hb$1	 : buy a house on estate with estateid $1
+.hs$1	 : sell a house on estate with estateid $1
+.m$1	 : mortgage estate with estateid $1
+.u$1	 : unmortgage estate with estateid $1
+
+- auction commands
+
+.a$1:$2 : bid $2 dollars for auction with auctionid $1
+
+- jail commands
+
+.jc	 : use get out of jail free card
+.jp	 : pay get out of jail fee
+.jr	 : attempt to roll doubles in jail
+
+- game management commands
+
+.gn	 : start a new game
+.gl      : request a list of open games
+.gj$1	 : join game with gameid $1
+.gd$1	 : set current game description to $1
+.gp	 : get playerlist for current game
+.gs	 : start current game
+
+- miscellaneous commands
+
+.d	 : disconnect from server
+
+===============================================================================
+3) server->client messages
+===============================================================================
+
+While they won't come like this from the server, I've split some messages
+onto more than one line for readibility.  Each line of messages is enclosed
+by <monopd> and </monopd>.
+
+--------------------
+
+ <server name="$1" version="$2"/>
+
+Identifies the server, sent upon connection.
+
+--------------------
+
+ <client clientid="$1" cookie="$2"/>
+
+Gives the client a unique identification.
+
+--------------------
+
+ <msg type="$1" value="$2"/>
+
+Used for sending informative messages to clients.  Possible types include 
+info, error, standby, and startgame.  These are just to display to users and 
+can be ignored as they will always be accompanied by more 'official' messages.
+
+--------------------
+
+ <display type="$1" name="$2" description="$3"/>
+
+Used for telling clients to display cards &c.  Type can be "chancecard" or
+"communitychestcard" at the moment, name is the name of the card, and 
+description is the text of the card.
+
+--------------------
+
+ <joinedgame playerid="$1"/>
+
+Informs clients that they have successfully joined a game, and that their
+playerid is $1.
+
+--------------------
+
+ <updateplayerlist type="$1">
+	<player clientid="$2" name="$3" host="$4" master="$5"/>
+	...
+ </updateplayerlist>
+
+Gives clients information about other players in game.  The "master" attribute
+of the player element denotes if the player is the master of the current
+game.
+The type ($1) can be "full", "edit", "add", or "del".
+
+--------------------
+
+ <updategamelist type="$1">
+	<game id="$2" players="$3" description="$4"/>
+	...
+ </updategamelist>
+
+Gives clients information about available games.  The description field is
+optional (and set with .gd); type can be either "full", "edit", "add", or 
+"del".
+
+--------------------
+
+ <playerupdate playerid="$1" name="$2" money="$3" location="$4" jailed="$5"
+   chancejailcard="$6" chestjailcard="$7" directmove="$8" bankrupt="$9"/>
+
+Most of these are obvious.  Directmove is a suggestion to clients about if
+they should animate tokens (ie, directmove is 1 for "go directly to jail").
+
+--------------------
+
+ <estateupdate estateid="$1" name="$2" owner="$3" houses="$4" houseprice="$5"
+   mortgaged="$6" groupid="$7" can_be_owned="$8" can_be_mortgaged="$9"
+   can_be_unmortgaged="$10" can_buy_houses="$11" can_sell_houses="$12"
+   money="$13" price="$14" mortgageprice="$15" unmortgageprice="$16"
+   type="$17"/>
+
+Again, stuff is pretty self-explanatory.  The "owner" attribute is set to 
+the playerid of the estate's owner; groupid is the number of the group that
+the estate belongs to.
+Money is only used for Free Parking; it indicates how much money will be 
+received upon landing on an estate.
+Type is a string, i.e. "chance" or "street".
+
+--------------------
+
+ <newturn player="$1"/>
+
+The player with playerid $1 has the current turn.
+
+--------------------
+
+ <tradeupdate type="$1" tradeid="$2" actor="$3">
+	<estate estateid="$4" included="$5"/>
+	...
+	<player playerid="$6" money="$7" accept="$7"/>
+	...
+ </tradeupdate>
+
+Type can be either "new" (for creating a new trade), "edit" (for editing the
+estates and players), "completed", or "rejected".  Actor is the playerid of
+the player initiating the tradeupdate (via a .T* command).  Player's accept
+field denotes whether that player has agreed to the current terms of the
+trade; this is reset to 0 upon any change and must be re-accepted with a .Ta.
+
+--------------------
+
+ <auctionupdate type="$1" auctionid="$2" actor="$3" estate="$4" highbid="$5"
+   highbidder="$6" status="$7" message="$8"/>
+
+Type can be either "new" (for creating a new auction), "edit", or "completed".
+Status is: 0 for normal, 1 for "going", 2 for "going, going", and 3 for "gone".
+Message is an optional message that the auctionupdate can send the client.
+
+--------------------
+
+ <gameupdate gameid="$1" status="$2"/>
+
+Status can be "init", "started", or "finished".
+
+--------------------
+
+  <commandlist type="$1">
+    <command id="$2" syntax="$3" description="$4">
+    ...
+  </commandlist>
+
+Informs clients about what commands are currently available.  Type con be
+"add", "del", or "full".
+

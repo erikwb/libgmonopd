@@ -1,0 +1,74 @@
+dnl --------------------------------
+dnl Initialization macros.
+dnl --------------------------------
+
+AC_INIT(libgmonopd/libgmonopd.h)
+AM_CONFIG_HEADER(config.h)
+
+dnl -----------------------------------------------
+dnl Package name and version number (user defined)
+dnl -----------------------------------------------
+
+LIBGMONOPD_LIBRARY_NAME=libgmonopd
+
+# release versioning
+LIBGMONOPD_MAJOR_VERSION=0
+LIBGMONOPD_MINOR_VERSION=3
+LIBGMONOPD_MICRO_VERSION=0
+
+# shared library versioning
+LIBGMONOPD_LIBRARY_VERSION=0:3:0
+#                  | | |
+#           +------+ | +---+
+#           |        |     |
+#        current:revision:age
+#           |        |     |
+#           |        |     +- increment if interfaces have been added
+#           |        |        set to zero if interfaces have been removed
+#           |        |        or changed
+#           |        +- increment if source code has changed
+#           |           set to zero if current is incremented
+#           +- increment if interfaces have been added, removed or changed
+
+dnl --------------------------------
+dnl Package name and version number
+dnl --------------------------------
+
+AC_SUBST(LIBGMONOPD_LIBRARY_VERSION)
+
+PACKAGE=$LIBGMONOPD_LIBRARY_NAME
+AC_SUBST(LIBGMONOPD_LIBRARY_NAME)
+
+LIBGMONOPD_VERSION=$LIBGMONOPD_MAJOR_VERSION.$LIBGMONOPD_MINOR_VERSION.$LIBGMONOPD_MICRO_VERSION
+LIBGMONOPD_RELEASE=$LIBGMONOPD_MAJOR_VERSION.$LIBGMONOPD_MINOR_VERSION
+
+AC_SUBST(LIBGMONOPD_RELEASE)
+AC_SUBST(LIBGMONOPD_VERSION)
+
+AC_DEFINE_UNQUOTED(LIBGMONOPD_MAJOR_VERSION, $LIBGMONOPD_MAJOR_VERSION)
+AC_DEFINE_UNQUOTED(LIBGMONOPD_MINOR_VERSION, $LIBGMONOPD_MINOR_VERSION)
+AC_DEFINE_UNQUOTED(LIBGMONOPD_MICRO_VERSION, $LIBGMONOPD_MICRO_VERSION)
+
+VERSION=$LIBGMONOPD_VERSION
+
+AM_INIT_AUTOMAKE($PACKAGE, $VERSION, no-define)
+
+dnl -----------------------------------------------
+dnl Checks for programs.
+dnl -----------------------------------------------
+
+AC_PROG_CC
+AM_PROG_LIBTOOL
+AM_SANITY_CHECK
+
+AC_LANG_C
+
+dnl -----------------------------------------------
+dnl Generates Makefiles, configuration files and scripts
+dnl -----------------------------------------------
+
+AC_OUTPUT(Makefile \
+	  libgmonopd-config \
+	  libgmonopd/Makefile
+)
+
